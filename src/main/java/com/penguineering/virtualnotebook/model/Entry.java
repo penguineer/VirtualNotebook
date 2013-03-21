@@ -6,7 +6,7 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public interface Entry {
-	public String getId();
+	public int getId();
 	public Date getTimestamp();
 	public String getType();
 }

@@ -6,7 +6,7 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 public interface Bullet {
-	public String getId();
+	public int getId();
 
 	public String getType();
 

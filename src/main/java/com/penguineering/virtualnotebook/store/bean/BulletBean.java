@@ -10,7 +10,7 @@ import com.penguineering.virtualnotebook.model.Bullet;
 
 @Immutable
 public class BulletBean implements Bullet {
-	private final String id;
+	private final int id;
 	private final int position;
 	private final String type;
 	private final String content;
@@ -27,7 +27,7 @@ public class BulletBean implements Bullet {
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 

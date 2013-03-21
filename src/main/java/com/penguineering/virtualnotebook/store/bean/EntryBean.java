@@ -6,7 +6,7 @@ import com.penguineering.virtualnotebook.model.Entry;
 
 public abstract class EntryBean implements Entry {
 
-	private final String id;
+	private final int id;
 	private final Date timestamp;
 
 	EntryBean(Entry template) {
@@ -15,7 +15,7 @@ public abstract class EntryBean implements Entry {
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 

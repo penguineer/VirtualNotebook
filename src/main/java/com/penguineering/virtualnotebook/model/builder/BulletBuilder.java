@@ -7,7 +7,7 @@ import java.util.List;
 import com.penguineering.virtualnotebook.model.Bullet;
 
 public class BulletBuilder extends LazyImmutable implements Bullet {
-	private String id;
+	private int id;
 	private String type;
 	private int position;
 	private String content;
@@ -18,12 +18,12 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		revokeMutability();
 		return id;
 	}
 
-	public BulletBuilder setId(String id) {
+	public BulletBuilder setId(int id) {
 		assertMutability();
 		this.id = id;
 		return this;

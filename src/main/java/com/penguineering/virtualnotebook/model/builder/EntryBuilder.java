@@ -5,19 +5,19 @@ import java.util.Date;
 import com.penguineering.virtualnotebook.model.Entry;
 
 public abstract class EntryBuilder extends LazyImmutable implements Entry {
-	private String id;
+	private int id;
 	private Date timestamp;
 
 	public EntryBuilder() {
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		revokeMutability();
 		return id;
 	}
 
-	public EntryBuilder setId(String id) {
+	public EntryBuilder setId(int id) {
 		assertMutability();
 		this.id = id;
 		return this;

@@ -2,16 +2,18 @@ package com.penguineering.virtualnotebook.store.sql;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.penguineering.virtualnotebook.model.Bullet;
 
 public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 
-	public BulletSqlProxy(String id) {
-		super(id);
+	public BulletSqlProxy(int id, DataSource ds) {
+		super(id, ds);
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		assertDataLoaded();
 		return getData().getId();
 	}
@@ -41,10 +43,9 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 	}
 
 	@Override
-	protected Bullet load() {
+	protected Bullet load(int id, DataSource ds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 
 }
