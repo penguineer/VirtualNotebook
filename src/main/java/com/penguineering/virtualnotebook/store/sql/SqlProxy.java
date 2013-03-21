@@ -1,6 +1,7 @@
 package com.penguineering.virtualnotebook.store.sql;
 
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 
 import javax.sql.DataSource;
 
@@ -35,5 +36,6 @@ public abstract class SqlProxy<T> {
 					"The internal data representation could not be loaded!");
 	}
 
-	protected abstract T load(int id, DataSource ds) throws SQLException;
+	protected abstract T load(int id, DataSource ds) throws SQLException,
+			NoSuchElementException;
 }
