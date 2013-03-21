@@ -1,11 +1,12 @@
 package com.penguineering.virtualnotebook.model.builder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.penguineering.virtualnotebook.model.Bullet;
 
-public class BulletBuilder implements Bullet {
+public class BulletBuilder extends LazyImmutable implements Bullet {
 	private String id;
 	private String type;
 	private int position;
@@ -18,50 +19,60 @@ public class BulletBuilder implements Bullet {
 
 	@Override
 	public String getId() {
+		revokeMutability();
 		return id;
 	}
 
 	public BulletBuilder setId(String id) {
+		assertMutability();
 		this.id = id;
 		return this;
 	}
 
 	@Override
 	public String getType() {
+		revokeMutability();
 		return type;
 	}
 
 	public BulletBuilder setType(String type) {
+		assertMutability();
 		this.type = type;
 		return this;
 	}
 
 	@Override
 	public int getPosition() {
+		revokeMutability();
 		return position;
 	}
 
 	public BulletBuilder setPosition(int position) {
+		assertMutability();
 		this.position = position;
 		return this;
 	}
 
 	@Override
 	public String getContent() {
+		revokeMutability();
 		return content;
 	}
 
 	public BulletBuilder setContent(String content) {
+		assertMutability();
 		this.content = content;
 		return this;
 	}
 
 	@Override
 	public List<Bullet> getBullets() {
-		return bullets;
+		revokeMutability();
+		return Collections.unmodifiableList(bullets);
 	}
 
 	public BulletBuilder addBullet(Bullet bullet) {
+		assertMutability();
 		this.bullets.add(bullet);
 		return this;
 	}

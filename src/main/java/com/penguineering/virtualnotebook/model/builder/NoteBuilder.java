@@ -1,6 +1,7 @@
 package com.penguineering.virtualnotebook.model.builder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.penguineering.virtualnotebook.model.Bullet;
@@ -16,25 +17,30 @@ public class NoteBuilder extends EntryBuilder implements Note {
 
 	@Override
 	public String getType() {
+		revokeMutability();
 		return "note";
 	}
 
 	@Override
 	public String getTitle() {
+		revokeMutability();
 		return title;
 	}
 
 	public NoteBuilder setTitle(String title) {
+		revokeMutability();
 		this.title = title;
 		return this;
 	}
 
 	@Override
 	public List<Bullet> getBullets() {
-		return bullets;
+		revokeMutability();
+		return Collections.unmodifiableList(bullets);
 	}
 
 	public NoteBuilder addBullet(Bullet bullet) {
+		revokeMutability();
 		this.bullets.add(bullet);
 		return this;
 	}
