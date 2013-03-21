@@ -7,12 +7,18 @@ import java.util.List;
 import com.penguineering.virtualnotebook.model.Bullet;
 import com.penguineering.virtualnotebook.model.Note;
 
-public class NoteBuilder extends EntryBuilder implements Note {
+public class NoteBuilder extends EntryBuilder<NoteBuilder> implements Note {
 	private String title;
 	private List<Bullet> bullets;
 
 	public NoteBuilder() {
 		this.bullets = new ArrayList<Bullet>();
+	}
+
+	public NoteBuilder(Note template) {
+		super(template);
+		this.title = template.getTitle();
+		this.bullets = new ArrayList<Bullet>(template.getBullets());
 	}
 
 	@Override
@@ -43,5 +49,9 @@ public class NoteBuilder extends EntryBuilder implements Note {
 		revokeMutability();
 		this.bullets.add(bullet);
 		return this;
+	}
+	
+	public void clearBullets() {
+		this.bullets.clear();
 	}
 }

@@ -18,6 +18,15 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 		this.bullets = new ArrayList<Bullet>();
 	}
 
+	public BulletBuilder(Bullet template) {
+		this.id = template.getId();
+		this.type = template.getType();
+		this.position = template.getPosition();
+		this.content = template.getContent();
+		this.marking = template.getMarking();
+		this.bullets = new ArrayList<Bullet>(template.getBullets());
+	}
+
 	@Override
 	public int getId() {
 		revokeMutability();
@@ -88,5 +97,9 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 		assertMutability();
 		this.bullets.add(bullet);
 		return this;
+	}
+	
+	public void clearBullets() {
+		this.bullets.clear();
 	}
 }

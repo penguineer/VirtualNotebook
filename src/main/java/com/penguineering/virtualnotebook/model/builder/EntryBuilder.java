@@ -4,11 +4,17 @@ import java.util.Date;
 
 import com.penguineering.virtualnotebook.model.Entry;
 
-public abstract class EntryBuilder extends LazyImmutable implements Entry {
+public abstract class EntryBuilder<T extends EntryBuilder<?>> extends
+		LazyImmutable implements Entry {
 	private int id;
 	private Date timestamp;
 
 	public EntryBuilder() {
+	}
+
+	public EntryBuilder(Entry template) {
+		this.id = template.getId();
+		this.timestamp = template.getTimestamp();
 	}
 
 	@Override
@@ -17,10 +23,12 @@ public abstract class EntryBuilder extends LazyImmutable implements Entry {
 		return id;
 	}
 
-	public EntryBuilder setId(int id) {
+	// TODO korrekt lösen
+	@SuppressWarnings("unchecked")
+	public T setId(int id) {
 		assertMutability();
 		this.id = id;
-		return this;
+		return (T) this;
 	}
 
 	@Override
@@ -29,10 +37,12 @@ public abstract class EntryBuilder extends LazyImmutable implements Entry {
 		return timestamp;
 	}
 
-	public EntryBuilder setTimestamp(Date timestamp) {
+	// TODO korrekt lösen
+	@SuppressWarnings("unchecked")
+	public T setTimestamp(Date timestamp) {
 		assertMutability();
 		this.timestamp = timestamp;
-		return this;
+		return (T) this;
 	}
 
 }
