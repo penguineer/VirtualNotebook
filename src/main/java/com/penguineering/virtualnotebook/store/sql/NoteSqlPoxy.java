@@ -84,7 +84,7 @@ public class NoteSqlPoxy extends SqlProxy<Note> implements Note {
 					+ " could not be found!");
 
 		builder.setId(id);
-		builder.setTimestamp(new Date(rs.getLong(1)));
+		builder.setTimestamp(new Date(rs.getLong(1)*1000));
 		builder.setTitle(rs.getString(2));
 
 		rs.close();
