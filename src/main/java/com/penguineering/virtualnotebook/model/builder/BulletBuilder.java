@@ -11,6 +11,7 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 	private String type;
 	private int position;
 	private String content;
+	private Marking marking;
 	private List<Bullet> bullets;
 
 	public BulletBuilder() {
@@ -62,6 +63,18 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 	public BulletBuilder setContent(String content) {
 		assertMutability();
 		this.content = content;
+		return this;
+	}
+
+	@Override
+	public Marking getMarking() {
+		revokeMutability();
+		return this.marking;
+	}
+
+	public BulletBuilder setMarking(Marking marking) {
+		assertMutability();
+		this.marking = marking;
 		return this;
 	}
 

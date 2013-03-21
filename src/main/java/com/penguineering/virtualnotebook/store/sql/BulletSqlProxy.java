@@ -44,6 +44,12 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 	}
 
 	@Override
+	public Marking getMarking() {
+		assertDataLoaded();
+		return getData().getMarking();
+	}
+
+	@Override
 	public List<Bullet> getBullets() {
 		assertDataLoaded();
 		return getData().getBullets();
@@ -69,7 +75,7 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 	private void loadCore(Connection con, int id, BulletBuilder builder)
 			throws SQLException {
 		final PreparedStatement ps = con
-				.prepareStatement("SELECT type, position, content "
+				.prepareStatement("SELECT type, position, content, marking "
 						+ "FROM bullets WHERE id=?");
 		ps.setInt(1, id);
 
@@ -83,6 +89,8 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 		builder.setType(rs.getString(1));
 		builder.setPosition(rs.getInt(2));
 		builder.setContent(rs.getString(3));
+		builder.setMarking(Bullet.Marking
+				.valueOf(rs.getString(4).toUpperCase()));
 
 		rs.close();
 		ps.close();
@@ -102,5 +110,4 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 		rs.close();
 		ps.close();
 	}
-
 }

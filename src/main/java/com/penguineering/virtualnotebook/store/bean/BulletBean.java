@@ -14,6 +14,7 @@ public class BulletBean implements Bullet {
 	private final int position;
 	private final String type;
 	private final String content;
+	private final Marking marking;
 	private final List<Bullet> bullets;
 
 	BulletBean(Bullet template) {
@@ -22,6 +23,7 @@ public class BulletBean implements Bullet {
 		this.position = template.getPosition();
 		this.type = template.getType();
 		this.content = template.getContent();
+		this.marking = template.getMarking();
 		this.bullets = Collections.unmodifiableList(new ArrayList<Bullet>(
 				template.getBullets()));
 	}
@@ -44,6 +46,11 @@ public class BulletBean implements Bullet {
 	@Override
 	public String getContent() {
 		return content;
+	}
+
+	@Override
+	public Marking getMarking() {
+		return marking;
 	}
 
 	@Override
