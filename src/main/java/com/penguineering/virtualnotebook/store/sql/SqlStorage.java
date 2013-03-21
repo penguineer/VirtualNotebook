@@ -94,6 +94,20 @@ public class SqlStorage implements Storage {
 			throw new IllegalStateException("Target note is not persistent. "
 					+ "Store the note first!");
 
+		return insertBullet(target.getId(), "note_id", bullet);
+	}
+
+	@Override
+	public Bullet attachBulletToBullet(Bullet target, Bullet bullet) {
+		if (target.getId() < 1)
+			throw new IllegalStateException("Target bullet is not persistent. "
+					+ "Store the parent bullet first!");
+
+		return insertBullet(target.getId(), "parent_id", bullet);
+	}
+
+	private Bullet insertBullet(int target_id, String target_field,
+			Bullet bullet) {
 		BulletBuilder builder = new BulletBuilder(bullet);
 
 		Connection con = null;
@@ -102,10 +116,11 @@ public class SqlStorage implements Storage {
 			con = ds.getConnection();
 
 			final PreparedStatement ps = con.prepareStatement(
-					"INSERT INTO bullets (note_id, type, position, content, marking) "
+					"INSERT INTO bullets (" + target_field
+							+ ", type, position, content, marking) "
 							+ "VALUES (?, ?, ?, ?, ?)",
 					Statement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, target.getId());
+			ps.setInt(1, target_id);
 			ps.setString(2, bullet.getType());
 			ps.setInt(3, bullet.getPosition());
 			ps.setString(4, bullet.getContent());
@@ -133,11 +148,5 @@ public class SqlStorage implements Storage {
 		}
 
 		return BeanModelFactory.INSTANCE.createbullet(builder);
-	}
-
-	@Override
-	public Bullet attachBulletToBullet(Bullet target, Bullet bullet) {
-		// TODO Auto-generated method stub
-		return bullet;
 	}
 }
