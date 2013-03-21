@@ -10,11 +10,8 @@ import javax.sql.DataSource;
 
 import com.penguineering.virtualnotebook.model.Bullet;
 import com.penguineering.virtualnotebook.model.Note;
-import com.penguineering.virtualnotebook.model.builder.BulletBuilder;
-import com.penguineering.virtualnotebook.model.builder.NoteBuilder;
 import com.penguineering.virtualnotebook.store.DataAccessException;
 import com.penguineering.virtualnotebook.store.Storage;
-import com.penguineering.virtualnotebook.store.bean.BeanModelFactory;
 
 public class SqlStorage implements Storage {
 	final DataSource ds;
@@ -23,7 +20,7 @@ public class SqlStorage implements Storage {
 		this.ds = ds;
 	}
 
-	private void closeCon(Connection con) {
+	private void _closeCon(Connection con) {
 		if (con != null)
 			try {
 				con.close();
@@ -33,19 +30,20 @@ public class SqlStorage implements Storage {
 			}
 	}
 
-	private void rollbackCon(Connection con) {
-		if (con != null)
-			try {
+	private void _rollbackCon(Connection con) {
+		try {
+			if (con != null && !con.getAutoCommit())
 				con.rollback();
-			} catch (SQLException e) {
-				throw new DataAccessException("Error closing SQL connection: "
-						+ e.getMessage(), e);
-			}
+		} catch (SQLException e) {
+			throw new DataAccessException("Error closing SQL connection: "
+					+ e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public Note persistNote(Note note) {
-		final NoteBuilder builder = new NoteBuilder(note);
+		final int id;
+		final Note n;
 
 		Connection con = null;
 		try {
@@ -64,8 +62,8 @@ public class SqlStorage implements Storage {
 			if (!rs.next())
 				throw new DataAccessException(
 						"Could not retrieve generated key!");
-			final int id = rs.getInt(1);
-			builder.setId(id);
+			id = rs.getInt(1);
+			n = new NoteSqlPoxy(id, ds);
 			rs.close();
 			ps.close();
 
@@ -76,16 +74,21 @@ public class SqlStorage implements Storage {
 			ps.execute();
 			ps.close();
 
+			// store attached bullet points
+			for (final Bullet b : note.getBullets()) {
+				_bullet2note(con, id, b);
+			}
+
 			con.commit();
 		} catch (SQLException e) {
-			rollbackCon(con);
+			_rollbackCon(con);
 			throw new DataAccessException("SQL exception on storing note: "
 					+ e.getMessage(), e);
 		} finally {
-			closeCon(con);
+			_closeCon(con);
 		}
 
-		return BeanModelFactory.INSTANCE.createNote(builder);
+		return n;
 	}
 
 	@Override
@@ -94,7 +97,54 @@ public class SqlStorage implements Storage {
 			throw new IllegalStateException("Target note is not persistent. "
 					+ "Store the note first!");
 
-		return insertBullet(target.getId(), "note_id", bullet);
+		final int id;
+		Connection con = null;
+
+		try {
+			con = ds.getConnection();
+			con.setAutoCommit(false);
+
+			id = _bullet2bullet(con, target.getId(), bullet);
+
+			con.commit();
+		} catch (SQLException e) {
+			_rollbackCon(con);
+			throw new DataAccessException("SQL exception on attaching bullet: "
+					+ e.getMessage(), e);
+		} finally {
+			_closeCon(con);
+		}
+
+		return new BulletSqlProxy(id, ds);
+	}
+
+	private int _bullet2note(Connection con, int note, Bullet bullet)
+			throws SQLException {
+		final PreparedStatement ps = con.prepareStatement(
+				"INSERT INTO bullets (note_id, type, position, content, marking) "
+						+ "VALUES (?, ?, ?, ?, ?)",
+				Statement.RETURN_GENERATED_KEYS);
+		ps.setInt(1, note);
+		ps.setString(2, bullet.getType());
+		ps.setInt(3, bullet.getPosition());
+		ps.setString(4, bullet.getContent());
+		Bullet.Marking marking = bullet.getMarking();
+		if (marking == null)
+			marking = Bullet.Marking.PENDING;
+		ps.setString(5, marking.toString().toLowerCase());
+		ps.execute();
+		ResultSet rs = ps.getGeneratedKeys();
+		if (!rs.next())
+			throw new DataAccessException("Could not retrieve generated key!");
+		final int id = rs.getInt(1);
+		rs.close();
+		ps.close();
+
+		// store sub-bullets
+		for (final Bullet b : bullet.getBullets())
+			_bullet2bullet(con, id, b);
+
+		return id;
 	}
 
 	@Override
@@ -103,50 +153,55 @@ public class SqlStorage implements Storage {
 			throw new IllegalStateException("Target bullet is not persistent. "
 					+ "Store the parent bullet first!");
 
-		return insertBullet(target.getId(), "parent_id", bullet);
-	}
-
-	private Bullet insertBullet(int target_id, String target_field,
-			Bullet bullet) {
-		BulletBuilder builder = new BulletBuilder(bullet);
+		final int id;
 
 		Connection con = null;
-
 		try {
 			con = ds.getConnection();
+			con.setAutoCommit(false);
 
-			final PreparedStatement ps = con.prepareStatement(
-					"INSERT INTO bullets (" + target_field
-							+ ", type, position, content, marking) "
-							+ "VALUES (?, ?, ?, ?, ?)",
-					Statement.RETURN_GENERATED_KEYS);
-			ps.setInt(1, target_id);
-			ps.setString(2, bullet.getType());
-			ps.setInt(3, bullet.getPosition());
-			ps.setString(4, bullet.getContent());
-			Bullet.Marking marking = bullet.getMarking();
-			if (marking == null)
-				marking = Bullet.Marking.PENDING;
-			builder.setMarking(marking);
-			ps.setString(5, marking.toString().toLowerCase());
-			ps.execute();
-			ResultSet rs = ps.getGeneratedKeys();
-			if (!rs.next())
-				throw new DataAccessException(
-						"Could not retrieve generated key!");
-			final int id = rs.getInt(1);
-			builder.setId(id);
-			rs.close();
-			ps.close();
+			id = _bullet2bullet(con, target.getId(), bullet);
 
+			con.commit();
 		} catch (SQLException e) {
-			rollbackCon(con);
+			_rollbackCon(con);
 			throw new DataAccessException("SQL exception on attaching bullet: "
 					+ e.getMessage(), e);
 		} finally {
-			closeCon(con);
+			_closeCon(con);
 		}
 
-		return BeanModelFactory.INSTANCE.createbullet(builder);
+		return new BulletSqlProxy(id, ds);
+	}
+
+	private int _bullet2bullet(Connection con, int parent_id, Bullet bullet)
+			throws SQLException {
+		final PreparedStatement ps = con
+				.prepareStatement(
+						"INSERT INTO bullets (note_id, parent_id, type, position, content, marking) "
+								+ "SELECT note_id, ?, ?, ?, ?, ? FROM bullets WHERE id=?",
+						Statement.RETURN_GENERATED_KEYS);
+		ps.setInt(1, parent_id);
+		ps.setString(2, bullet.getType());
+		ps.setInt(3, bullet.getPosition());
+		ps.setString(4, bullet.getContent());
+		Bullet.Marking marking = bullet.getMarking();
+		if (marking == null)
+			marking = Bullet.Marking.PENDING;
+		ps.setString(5, marking.toString().toLowerCase());
+		ps.setInt(6, parent_id);
+		ps.execute();
+		ResultSet rs = ps.getGeneratedKeys();
+		if (!rs.next())
+			throw new DataAccessException("Could not retrieve generated key!");
+		final int id = rs.getInt(1);
+		rs.close();
+		ps.close();
+
+		// store sub-bullets
+		for (final Bullet b : bullet.getBullets())
+			_bullet2bullet(con, id, b);
+
+		return id;
 	}
 }
