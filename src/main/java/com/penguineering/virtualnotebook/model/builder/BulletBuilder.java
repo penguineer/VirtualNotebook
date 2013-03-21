@@ -16,6 +16,7 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 
 	public BulletBuilder() {
 		this.bullets = new ArrayList<Bullet>();
+		this.marking = Bullet.Marking.PENDING;
 	}
 
 	public BulletBuilder(Bullet template) {
@@ -98,7 +99,7 @@ public class BulletBuilder extends LazyImmutable implements Bullet {
 		this.bullets.add(bullet);
 		return this;
 	}
-	
+
 	public void clearBullets() {
 		this.bullets.clear();
 	}
