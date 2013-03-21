@@ -1,6 +1,10 @@
 package com.penguineering.virtualnotebook.store.sql;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
+
+import com.penguineering.virtualnotebook.store.DataAccessException;
 
 public abstract class SqlProxy<T> {
 	private T data = null;
@@ -19,11 +23,17 @@ public abstract class SqlProxy<T> {
 
 	protected void assertDataLoaded() {
 		if (data == null)
-			data = load(id, ds);
+			try {
+				data = load(id, ds);
+			} catch (SQLException e) {
+				throw new DataAccessException("Exception during SQL access: "
+						+ e.getMessage(), e);
+			}
 
 		if (getData() == null)
-			throw new IllegalStateException("The data could not be loaded!");
+			throw new DataAccessException(
+					"The internal data representation could not be loaded!");
 	}
 
-	protected abstract T load(int id, DataSource ds);
+	protected abstract T load(int id, DataSource ds) throws SQLException;
 }
