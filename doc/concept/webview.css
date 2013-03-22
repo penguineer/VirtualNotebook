@@ -1,0 +1,87 @@
+body {
+	width: 500px;
+	padding: 10px;
+	border-style: solid;
+}
+
+header>h1 {
+	text-align: center;
+}
+
+footer {
+	text-align: right;
+	font-size: small;
+}
+
+h1.day {
+	text-align: right;
+	font-family: "Lucida Console", Monaco, monospace;
+	font-weight: normal;
+	border-top-style: solid;
+	margin-bottom: -1em;	
+}
+
+article>h1 {
+	font-size: medium;
+	padding-bottom: 0;
+	margin-bottom: 0;
+	font-family: Tahoma, Geneva, sans-serif;
+}
+
+article>h1+ul {
+	margin-top: 5px;
+}
+
+li {
+	list-style-type: none;
+	text-align: justify;
+	font-family: Georgia;
+}
+
+li>ul {
+	padding-bottom: 10px;
+}
+
+span.marking {
+	padding: 1px 3px 1px 3px;
+	border-radius: 3px;
+	font-weight: bold;
+	font-size: small;
+	font-variant: small-caps;
+	font-family: Tahoma, Geneva, sans-serif
+}
+
+li.pending>span.marking {
+	background-color: #6cf;
+	color: white;
+}
+
+li.pending>span.marking:before {
+	content: "❏ ";
+	visibility: hidden;
+}
+
+li.done {
+	color: #888;
+}
+
+li.done>span.marking {
+	background-color: #eee;
+	color: #888;
+}
+
+li.done>span.marking:before {
+	content: "✓ ";
+}
+
+li.abandoned {
+	color: #ccc;
+}
+
+li.abandoned>span.marking {
+	
+}
+
+li.abandoned>span.marking:before {
+	content: "❌ ";
+}
