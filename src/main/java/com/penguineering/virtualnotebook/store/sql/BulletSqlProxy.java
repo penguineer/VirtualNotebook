@@ -21,8 +21,8 @@ public class BulletSqlProxy extends SqlProxy<Bullet> implements Bullet {
 
 	@Override
 	public int getId() {
-		assertDataLoaded();
-		return getData().getId();
+		// do not load when just the id is needed
+		return getInternalId();
 	}
 
 	@Override

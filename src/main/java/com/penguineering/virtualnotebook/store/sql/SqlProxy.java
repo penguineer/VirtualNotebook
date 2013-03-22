@@ -17,6 +17,10 @@ public abstract class SqlProxy<T> {
 		this.id = id;
 		this.ds = ds;
 	}
+	
+	protected int getInternalId() {
+		return id;
+	}
 
 	protected T getData() {
 		return data;

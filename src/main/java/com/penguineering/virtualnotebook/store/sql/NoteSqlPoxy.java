@@ -23,8 +23,8 @@ public class NoteSqlPoxy extends SqlProxy<Note> implements Note {
 
 	@Override
 	public int getId() {
-		assertDataLoaded();
-		return getData().getId();
+		// do not load when just the id is needed
+		return getInternalId();
 	}
 
 	@Override
