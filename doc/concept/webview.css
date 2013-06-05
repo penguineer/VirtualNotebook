@@ -2,6 +2,7 @@ body {
 	width: 500px;
 	padding: 10px;
 	border-style: solid;
+	border-color: #999;
 }
 
 header>h1 {
@@ -17,9 +18,11 @@ h1.day {
 	text-align: right;
 	font-family: "Lucida Console", Monaco, monospace;
 	font-weight: normal;
+	color: #999;
 	border-top: solid 2px;
+	border-color: #999;
 	padding-top: 3px;
-	margin-bottom: -1em;
+	margin-bottom: -0.5em;
 }
 
 article {
