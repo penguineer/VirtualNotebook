@@ -6,6 +6,31 @@
 <meta name="description" content="Virtual Notebook concept page.">
 </head>
 <body>
+  <script src="jquery-2.0.2.js"></script>
+  <script>
+    var STATES = new Array("pending", "done", "abandoned", "pending");
+  
+    $(function() {
+      $("h1").click(function(event) {
+	event.preventDefault();
+	$(this).parent().hide("slow");
+      });
+      
+      $("li").click(function(event) {
+	event.preventDefault();
+	
+	for (var i = 0; i < STATES.length; i++) {
+	  if ( $(this).hasClass(STATES[i]) ) {
+	    $(this).removeClass(STATES[i]);
+	    $(this).addClass(STATES[i+1]);
+	    break;
+	  }
+	} // for
+      });
+      
+      
+    });
+  </script>
 	<header>
 		<h1>Virtual Notebook</h1>
 
