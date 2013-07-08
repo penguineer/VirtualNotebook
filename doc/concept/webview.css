@@ -25,19 +25,21 @@ h1.day {
 	margin-bottom: -0.5em;
 }
 
-article {
-	border-top: solid 1px;
+article>ul {
+	border-bottom: solid 1px;
+	padding-bottom: 10px;
 }
 
-h1.day+article {
-	border: none;
-}
 
 article>h1 {
 	font-size: medium;
 	padding-bottom: 0;
 	margin-bottom: 0;
 	font-family: Tahoma, Geneva, sans-serif;
+}
+
+article>h1.collapsed {
+	color: #999;
 }
 
 article>h1+ul {
