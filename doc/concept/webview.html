@@ -11,22 +11,28 @@
     var STATES = new Array("pending", "done", "abandoned", "pending");
   
     $(function() {
-      $("h1").click(function(event) {
-	event.preventDefault();
-	$(this).parent().hide("slow");
+      $("h1.entry").click(function(event) {
+		event.preventDefault();
+		if ( $(this).hasClass("collapsed") ) {
+			$(this).removeClass("collapsed");			
+			$(this).parent().find("ul").show("slow");
+		} else {			
+			$(this).addClass("collapsed");
+			$(this).parent().find("ul").hide("slow");
+		}
       });
       
-      $("li").click(function(event) {
-	event.preventDefault();
-	
-	for (var i = 0; i < STATES.length; i++) {
-	  if ( $(this).hasClass(STATES[i]) ) {
-	    $(this).removeClass(STATES[i]);
-	    $(this).addClass(STATES[i+1]);
-	    break;
-	  }
-	} // for
-      });
+    $("li").click(function(event) {
+		event.preventDefault();
+		
+		for (var i = 0; i < STATES.length; i++) {
+		  if ( $(this).hasClass(STATES[i]) ) {
+		    $(this).removeClass(STATES[i]);
+		    $(this).addClass(STATES[i+1]);
+		    break;
+		  }
+		} // for
+    });
       
       
     });
@@ -60,7 +66,9 @@
 				</ul>
 			</li>
 			<li>Außerdem fehlt hier noch ein Eintrag, der besonders lang
-				ist, damit die Zeilenumbruch-Funktion mal getestet werden kann.</li>
+				ist, damit die Zeilenumbruch-Funktion mal getestet werden kann.
+				Für den Blocksatz brauchen wir mindestens drei Zeilen, besser wären
+				noch vier Zeilen, falls sich dieser Text noch so lang ausdehnen lässt.</li>
 		</ul>
 	</article>
 	<article>
